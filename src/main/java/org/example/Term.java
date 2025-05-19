@@ -1,31 +1,35 @@
 package org.example;
-import java.util.LinkedList;
-public class Term {
-    private LinkedList<Doc> dokumen;
-    private String kata;
 
-    public Term(String kata) {
-        this.kata = kata;
-        this.dokumen = new LinkedList<>();
+
+public class Term implements Comparable<Term>{
+    private String term;
+    private int df;
+    private double idf;
+
+    private DocListOrdered<Document> DocOrdered = new DocListOrdered<>(); 
+
+    public String getTerm() {
+      return this.term;
+    }
+    public void setTerm(String value) {
+      this.term = value;
     }
 
-    public String getKata() {
-        return kata;
+    public int getDf() {
+      return this.df;
+    }
+    public void setDf(int value) {
+      this.df = value;
     }
 
-    public LinkedList<Doc> getDokumen() {
-        return dokumen;
+    public double getIdf() {
+      return this.idf;
+    }
+    public void setIdf(double value) {
+      this.idf = value;
     }
 
-    public void tambahDokumen(Doc dokumens) {
-        if (!dokumen.contains(dokumens)) {
-            dokumen.add(dokumens);
-        }
+     public int compareTo(Term other_term) {
+        return this.term.compareTo(other_term.term);
     }
-
-    @Override
-    public String toString() {
-        return "Kata: '" + kata + "', Muncul di: " + dokumen;
-    }
-
 }
