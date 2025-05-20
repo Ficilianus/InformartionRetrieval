@@ -8,6 +8,10 @@ public class Term implements Comparable<Term>{
 
     private DocListOrdered<Document> DocOrdered = new DocListOrdered<>(); 
 
+    public Term(String term){
+      this.term = term;
+    }
+
     public String getTerm() {
       return this.term;
     }
@@ -29,7 +33,7 @@ public class Term implements Comparable<Term>{
       this.idf = value;
     }
 
-     public int compareTo(Term other_term) {
-        return this.term.compareTo(other_term.term);
+     public int compareTo(Term otherTerm) {
+        return this.term.compareTo(otherTerm.term);
     }
 }

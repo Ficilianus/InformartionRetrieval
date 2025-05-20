@@ -10,7 +10,7 @@ public class Document implements Comparable<Document> {
       this.name = value;
     }
 
-     public int compareTo(Document other_doc) {
-        return this.name.compareTo(other_doc.name);
+     public int compareTo(Document otherDoc) {
+        return this.name.compareTo(otherDoc.name);
     }
 }
