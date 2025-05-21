@@ -29,12 +29,13 @@ public class Tokenizer {
             //  List<String> resultStop = new ArrayList<>();
 
             for (String token : tokens) {
-               if (!termStopWords.contains(token)) {
-                    result.add(token);
-               }else{
-                System.out.println("ada");
+            // Hapus token yang kosong, angka saja, dan yang masuk ke stopword
+            if (!token.isEmpty() && !token.matches("\\d+") && !termStopWords.contains(token)) {
+                result.add(token);
+            }else{
                 //buat debugg
 
+                // System.out.println("ada");
                 // resultStop.add(token);
                 // return resultStop.toArray(new String[0]);
                }

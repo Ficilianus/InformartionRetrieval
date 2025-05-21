@@ -13,8 +13,15 @@ public class Main {
         // System.out.println(ordered1.get(1).getTerm());
  
         ReadFile read1 = new ReadFile("koleksi");
-        read1.read();
-        // System.out.println(Tokenizer.tokenize("dikira").length);;
+        // read1.read().size();
+
+        //buat testing
+        int index = 49;
+        System.out.println(read1.read().getInvertedList().get(index).getTerm());
+        System.out.println(read1.read().getInvertedList().get(index).getDocOrdered().get(4).getName());
+        //akhir testing
+
+       
          
     }
 }
