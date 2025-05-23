@@ -15,13 +15,18 @@ public class Main {
         ReadFile read1 = new ReadFile("koleksi");
         // read1.read().size();
 
+
+
+
         //buat testing
         int index = 49;
-        System.out.println(read1.read().getInvertedList().get(index).getTerm());
-        System.out.println(read1.read().getInvertedList().get(index).getDocOrdered().get(4).getName());
+//        System.out.println(read1.read().getInvertedList().get(index).getTerm());
+//        System.out.println(read1.read().getInvertedList().get(index).getDocOrdered().get(4).getName());
         //akhir testing
 
-       
-         
+
+        InvertedIndex indexData = read1.read();
+        indexData.searchTerm();
+
     }
 }
