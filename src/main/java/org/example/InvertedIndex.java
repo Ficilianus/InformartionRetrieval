@@ -1,6 +1,11 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Scanner;
 
 public class InvertedIndex {
@@ -103,4 +108,122 @@ public class InvertedIndex {
             System.out.println("Tidak ditemukan dokumen yang mengandung kedua keyword.");
         }
     }
+
+    public DocListOrdered searchAndTerm(String query){
+        DocListOrdered<Document> result = new DocListOrdered<>();
+
+        String[] tokensQuery= Tokenizer.tokenize(query);
+        System.out.println(Arrays.toString(tokensQuery));
+        ArrayList<DocListOrdered<Document>> postingLists = new ArrayList<>();
+
+
+        for (Term term : this.invertedList) {
+            for (String token : tokensQuery) {
+                if (term.getTerm().equals(token)) {
+                    postingLists.add(term.getDocOrdered());
+                }
+            }
+        }
+
+        postingLists.sort(Comparator.comparingInt(DocListOrdered::size));
+        for (DocListOrdered<Document> docListOrdered : postingLists) {
+            System.out.println(docListOrdered.size());
+            
+        }
+
+       
+      
+       
+
+        // for (Document document : intersect(postingLists.get(0) , postingLists.get(1))) {
+        //     System.out.println(document.getName());
+        // }
+
+      
+        result = new DocListOrdered<>();
+        result = postingLists.get(0);
+        if (postingLists.size() < 2) {
+            return result;
+        }
+        for (int i = 1; i < postingLists.size(); i++) {
+            result = intersect(result, postingLists.get(i));
+        }
+
+        // // Tampilkan hasil
+        // System.out.println("Hasil intersect:");
+        // for (Document doc : result) {
+        //     System.out.println(doc.getName());
+        // }
+
+
+        return result;
+        
+
+        
+      
+    }
+
+    public DocListOrdered<Document> intersect(DocListOrdered<Document> list1, DocListOrdered<Document> list2){
+        DocListOrdered<Document> result = new DocListOrdered<>();
+        // System.out.println("Isi list1:");
+        // for (Document doc : list1) {
+        //     System.out.print(doc.getName() + " ");
+        // }
+
+        // System.out.println();
+
+        // System.out.println("Isi list2:");
+
+        // for (Document doc : list2) {
+        //     System.out.print(doc.getName() + " ");
+        // }
+
+        // System.out.println();
+
+         ListIterator<Document> iterator1 = list1.listIterator();
+         ListIterator<Document> iterator2 = list2.listIterator();
+         if(iterator1.hasNext() && iterator2.hasNext()){
+          
+            Document doc1 = iterator1.next();
+            Document doc2 = iterator2.next();
+      
+
+            while (true) {
+                int compare = doc1.compareTo(doc2);
+                if (compare < 0) {
+                    if (iterator1.hasNext()) {
+                        doc1 = iterator1.next();
+                    }else{
+                        break;
+                    }
+                  
+                  
+                }else if(compare > 0){
+                    if (iterator2.hasNext()) {
+                        doc2 = iterator2.next();
+                    }else{
+                        break;
+                    }
+                   
+                }else {
+                    result.addSort(doc1);
+                    if (iterator1.hasNext() && iterator2.hasNext()) {
+                        doc1 = iterator1.next();
+                        doc2 = iterator2.next();
+                    } else {
+                        break;
+                    }
+                }
+          
+            }
+        //    System.out.println(doc1.getName());
+         }
+        //  System.out.println();
+        //  System.out.println("yang ketemu : ");
+
+         return result;
+    }
+    
+
+    
 }

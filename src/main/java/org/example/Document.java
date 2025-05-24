@@ -29,4 +29,8 @@ public class Document implements Comparable<Document> {
 
       return Integer.compare(angkaName1, angkaName2);
     }
+
+     public String toString() {
+        return this.name;  
+    }
 }
