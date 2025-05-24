@@ -109,11 +109,11 @@ public class InvertedIndex {
         }
     }
 
-    public DocListOrdered searchAndTerm(String query){
+    public DocListOrdered<Document> searchAndTerm(String query){
         DocListOrdered<Document> result = new DocListOrdered<>();
 
         String[] tokensQuery= Tokenizer.tokenize(query);
-        System.out.println(Arrays.toString(tokensQuery));
+        // System.out.println(Arrays.toString(tokensQuery));
         ArrayList<DocListOrdered<Document>> postingLists = new ArrayList<>();
 
 
@@ -126,10 +126,10 @@ public class InvertedIndex {
         }
 
         postingLists.sort(Comparator.comparingInt(DocListOrdered::size));
-        for (DocListOrdered<Document> docListOrdered : postingLists) {
-            System.out.println(docListOrdered.size());
+        // for (DocListOrdered<Document> docListOrdered : postingLists) {
+        //     System.out.println(docListOrdered.size());
             
-        }
+        // }
 
        
       

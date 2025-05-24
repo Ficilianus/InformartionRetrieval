@@ -38,7 +38,7 @@ public class Main {
         System.out.print("Masukkan Yang ingin dicari: ");
         Scanner input = new Scanner(System.in);
         String query = input.nextLine();
-
+        System.out.print("dokumen yang mengandung kata tersebut : ");
         System.out.println(invertedList.searchAndTerm(query).toString());
         // indexData.searchTerm();  
         MemoryLogger.log();
