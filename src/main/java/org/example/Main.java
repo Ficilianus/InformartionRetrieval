@@ -60,7 +60,10 @@ public class Main {
         }
 
         scanner.close();
+            Tokenizer.tokenize("s");
+             Tokenizer.tokenize("s");
     }
+
 
     private static void pause(Scanner scanner) {
         System.out.println("\nTekan Enter untuk kembali ke menu...");

@@ -12,10 +12,8 @@ public class Tokenizer {
     //static akan dijalankan saat class dipanggil pertama kali, untuk membaca file stopwords
     static {
         try {
-            
             File file = new File("sastrawi");
             termStopWords = Files.readAllLines(Paths.get(file.getAbsolutePath() + "//" + file.list()[0] ));
-          
         } catch (Exception e) {
             System.out.println(e);
         }

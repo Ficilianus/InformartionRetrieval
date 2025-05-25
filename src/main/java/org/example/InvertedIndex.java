@@ -1,12 +1,9 @@
 package org.example;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.ListIterator;
-import java.util.Scanner;
+
 
 public class InvertedIndex {
     DocListOrdered<Term> invertedList = new DocListOrdered<>();
@@ -23,204 +20,114 @@ public class InvertedIndex {
         this.invertedList = value;
     }
 
-    public void searchTerm() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Masukkan Yang ingin dicari: ");
-        String keywords = scanner.nextLine();
-        String[] kata = keywords.split(" ");
-        int jumlahKata = kata.length;
-        if (jumlahKata == 2) {
-            searchTerm2(keywords);
-            return;
-        } else if (jumlahKata > 2) {
-            System.out.println(" Maksimum 2 kata");
-        }
-        boolean found = false;
-        for (Term term : invertedList) {
-            if (term.getTerm().equalsIgnoreCase(keywords)) {
-                System.out.println("Term ditemukan: " + term.getTerm());
-                System.out.println("Jumlah dokumen yang mengandung term ini: " + term.getDf());
-                System.out.println("Daftar dokumen:");
-                for (Document doc : term.getDocOrdered()) {
-                    System.out.println("- " + doc.getName());
-                }
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            System.out.println("Term \"" + keywords + "\" tidak ditemukan dalam indeks.");
-        }
-    }
-
-    public void searchTerm2(String input) {
-        // Pisahkan berdasarkan spasi
-        String[] keywords = input.split(" ");
-        String keyword1 = keywords[0];
-        String keyword2 = keywords[1];
-        Term term1 = null, term2 = null;
-        // Cari Term yang sesuai untuk kedua keyword
-        for (Term term : invertedList) {
-            if (term.getTerm().equalsIgnoreCase(keyword1)) {
-                term1 = term;
-            } else if (term.getTerm().equalsIgnoreCase(keyword2)) {
-                term2 = term;
-            }
-        }
-        if (term1 == null || term2 == null) {
-            System.out.println("Salah satu keyword tidak ditemukan dalam indeks.");
-            return;
-        }
-        // Dapatkan list dokumen dari kedua term
-        List<Document> docs1 = term1.getDocOrdered();
-        List<Document> docs2 = term2.getDocOrdered();
-        int i = 0, j = 0;
-        Document d1 = docs1.get(i);
-        Document d2 = docs2.get(j);
-        boolean found = false;
-        // Loop seperti menyamakan dua pointer pada dua linked list terurut
-        while (i < docs1.size()) {
-            j=0;
-            d1 = docs1.get(i);
-            d2 = docs2.get(j);
-            int comparison = d1.getName().compareTo(d2.getName());
-            if (comparison == 0) {
-                // Jika nama dokumen sama
-                System.out.println("Dokumen ditemukan: " + d1.getName());
-                found = true;
-                i++;
-            } else {
-                while (j < docs2.size()) {
-                    d2 = docs2.get(j);
-                    comparison = d1.getName().compareTo(d2.getName());
-                    if (comparison == 0) {
-                        // Jika nama dokumen sama
-                        System.out.println("Dokumen ditemukan: " + d1.getName());
-                        found = true;
-                        break;
-                    }
-                    j++;
-                }
-                i++;
-            }
-        }
-        if (!found) {
-            System.out.println("Tidak ditemukan dokumen yang mengandung kedua keyword.");
-        }
-    }
-
-    public DocListOrdered<Document> searchAndTerm(String query){
+   public DocListOrdered<Document> searchAndTerm(String query) {
+        // List hasil akhir pencarian
         DocListOrdered<Document> result = new DocListOrdered<>();
 
-        String[] tokensQuery= Tokenizer.tokenize(query);
-        // System.out.println(Arrays.toString(tokensQuery));
+        // Tokenisasi query input
+        String[] tokensQuery = Tokenizer.tokenize(query);
+
+        // Daftar posting list dari setiap token yang cocok
         ArrayList<DocListOrdered<Document>> postingLists = new ArrayList<>();
 
-
-        for (Term term : this.invertedList) {
+        // Ambil posting list dari setiap term yang cocok dalam inverted index
+        if (tokensQuery.length > 0) {
             for (String token : tokensQuery) {
-                if (term.getTerm().equals(token)) {
-                    postingLists.add(term.getDocOrdered());
+                for (Term term : this.invertedList) {
+                    if (term.getTerm().equals(token)) {
+                        postingLists.add(term.getDocOrdered());
+                        break; //jika term tidak duplikat, bisa keluar loop lebih cepat
+                    }
                 }
             }
         }
 
+        // Urutkan posting list dari yang paling kecil 
         postingLists.sort(Comparator.comparingInt(DocListOrdered::size));
-        // for (DocListOrdered<Document> docListOrdered : postingLists) {
-        //     System.out.println(docListOrdered.size());
-            
-        // }
 
-       
-      
-       
+        // Jika ada posting list yang ditemukan
+        if (!postingLists.isEmpty()) {
+            // Ambil posting list pertama sebagai dasar hasil awal
+            result = postingLists.get(0);
 
-        // for (Document document : intersect(postingLists.get(0) , postingLists.get(1))) {
-        //     System.out.println(document.getName());
-        // }
-
-      
-        result = new DocListOrdered<>();
-        result = postingLists.get(0);
-        if (postingLists.size() < 2) {
-            return result;
+            // Jika hanya ada satu term/token yang cocok, langsung return
+            if (postingLists.size() == 1) {
+                return result;
+            }else{
+                 // Jika lebih dari satu, lakukan intersection antar posting list
+                 for (int i = 1; i < postingLists.size(); i++) {
+                    result = intersect(result, postingLists.get(i));
+                }
+            }
         }
-        for (int i = 1; i < postingLists.size(); i++) {
-            result = intersect(result, postingLists.get(i));
-        }
-
-        // // Tampilkan hasil
-        // System.out.println("Hasil intersect:");
-        // for (Document doc : result) {
-        //     System.out.println(doc.getName());
-        // }
-
-
+        // Jika tidak ada posting list yang ditemukan, return list kosong
         return result;
-        
+    }   
 
-        
-      
-    }
 
     public DocListOrdered<Document> intersect(DocListOrdered<Document> list1, DocListOrdered<Document> list2){
-        DocListOrdered<Document> result = new DocListOrdered<>();
-        // System.out.println("Isi list1:");
-        // for (Document doc : list1) {
-        //     System.out.print(doc.getName() + " ");
-        // }
-
-        // System.out.println();
-
-        // System.out.println("Isi list2:");
-
-        // for (Document doc : list2) {
-        //     System.out.print(doc.getName() + " ");
-        // }
-
-        // System.out.println();
-
+         //membuat docordered linkedlist untuk menyimpan hasil 
+         DocListOrdered<Document> result = new DocListOrdered<>();
+        
+         //inisialisasi iterator pada parameter list1
          ListIterator<Document> iterator1 = list1.listIterator();
+         //inisialisasi iterator pada parameter list2
          ListIterator<Document> iterator2 = list2.listIterator();
+
+         //jika iterator 1 dan 2 memiliki data setelah posisi iterator, maka : 
          if(iterator1.hasNext() && iterator2.hasNext()){
           
+            //geser iterator ke kanan lalu masukan data ke objek doc1
             Document doc1 = iterator1.next();
+            //geser iterator ke kanan lalu masukan data ke objek doc2
             Document doc2 = iterator2.next();
       
-
+            //loop berjalan terus menerus hingga bertemu dengan break
             while (true) {
+                //melakukan perbandingan antar dua objek
                 int compare = doc1.compareTo(doc2);
+
+                //jka objek doc1 lebih kecil daripada object doc2
                 if (compare < 0) {
+                    //dan jika setelah iterator pada list1 terdapat data
                     if (iterator1.hasNext()) {
+                        //maka geser pointer ke data sebelah lalu masukan data ke dalam objek doc1
                         doc1 = iterator1.next();
+                    //jika tidak ada data di sebelah kanan iterator
                     }else{
+                        //maka keluar dari loop
                         break;
                     }
-                  
-                  
+                    
+                //jka objek doc1 lebih besar daripada object doc2
                 }else if(compare > 0){
+                     //dan jika setelah iterator pada list2 terdapat data
                     if (iterator2.hasNext()) {
+                         //maka geser pointer2 ke data sebelah lalu masukan data ke dalam objek doc2
                         doc2 = iterator2.next();
+                    //jika tidak ada data di sebelah kanan iterator
                     }else{
+                        //maka keluar dari loop
                         break;
                     }
-                   
+                //jika objek doc1 dan doc2 sama
                 }else {
+                    //maka menambahkan data doc tersebut ke doc ordered result
                     result.addSort(doc1);
+                       //dan jika setelah iterator pada list1 dan list2 terdapat data
                     if (iterator1.hasNext() && iterator2.hasNext()) {
+                        //maka geser pointer ke data sebelah lalu masukan data ke dalam objek doc1
                         doc1 = iterator1.next();
+                        //maka geser pointer2 ke data sebelah lalu masukan data ke dalam objek doc2
                         doc2 = iterator2.next();
+                    //jika tidak ada data di sebelah kanan iterator
                     } else {
+                        //maka keluar dari loop
                         break;
                     }
                 }
-          
             }
-        //    System.out.println(doc1.getName());
          }
-        //  System.out.println();
-        //  System.out.println("yang ketemu : ");
-
          return result;
     }
     
