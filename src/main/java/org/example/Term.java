@@ -45,4 +45,8 @@ public class Term implements Comparable<Term>{
     public void setDocOrdered(DocListOrdered<Document> value) {
       this.DocOrdered = value;
     }
+
+     public void calculateIDF(int totaldocs){
+      this.idf = Math.log10( (double) totaldocs/this.DocOrdered.size());
+    }
 }

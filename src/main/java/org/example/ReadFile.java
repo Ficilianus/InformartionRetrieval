@@ -46,14 +46,17 @@ public class ReadFile {
                           for (Term term : invertedTermList.getInvertedList()) {
                             //jika token dan term sama maka  menambahkan document saja
                             if (token.equals(term.getTerm())) {
-                                term.getDocOrdered().addSort(documentObject);
                                 term.setDf(term.getDocOrdered().size());
+                                term.calculateIDF(listDocs.length);
+                                term.getDocOrdered().addSort(documentObject);
                                 break;
                             }
                           }
                         }
                         Term termObject = new Term(token);
                           // System.out.println(termObject.getTerm());
+                        
+                        termObject.calculateIDF(listDocs.length);
                         termObject.getDocOrdered().addSort(documentObject);
                         invertedTermList.addTerm(termObject);
                         input.close();

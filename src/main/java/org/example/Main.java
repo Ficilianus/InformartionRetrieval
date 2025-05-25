@@ -7,20 +7,20 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int pilihan = 0;
 
-        while (pilihan != 3) {
+        while (pilihan != 4) {
             System.out.println("=== MENU UTAMA ===");
             System.out.println("1. Pencarian");
             System.out.println("2. Tampilkan Inverted Index");
-            System.out.println("3. Keluar");
-            System.out.print("Masukkan pilihan Anda (1-3): ");
+            System.out.println("3. Tampilkan Informasi Term");
+            System.out.println("4. Keluar");
+            System.out.print("Masukkan pilihan Anda (1-4): ");
 
             pilihan = scanner.nextInt();
-            scanner.nextLine(); 
+            scanner.nextLine(); // Clear newline
 
             if (pilihan == 1) {
                 System.out.println("Anda memilih: Pencarian");
 
-               
                 ReadFile read1 = new ReadFile("koleksi");
                 InvertedIndex invertedList = read1.read();
 
@@ -50,23 +50,34 @@ public class Main {
                 pause(scanner);
 
             } else if (pilihan == 3) {
+                System.out.println("Anda memilih: Tampilkan Informasi Term");
+
+                ReadFile read1 = new ReadFile("koleksi");
+                InvertedIndex invertedList = read1.read();
+
+                System.out.print("Masukkan kata atau kalimat: ");
+                String query = scanner.nextLine();
+                invertedList.printTermInfo(query); 
+
+                pause(scanner);
+
+            } else if (pilihan == 4) {
                 System.out.println("Terima kasih! Program selesai.");
             } else {
-                System.out.println("Pilihan tidak valid. Silakan masukkan angka 1-3.");
+                System.out.println("Pilihan tidak valid. Silakan masukkan angka 1-4.");
                 pause(scanner);
             }
 
-            System.out.println(); 
+            System.out.println();
         }
 
         scanner.close();
-            Tokenizer.tokenize("s");
-             Tokenizer.tokenize("s");
+      
+      
     }
-
 
     private static void pause(Scanner scanner) {
         System.out.println("\nTekan Enter untuk kembali ke menu...");
-        scanner.nextLine(); 
+        scanner.nextLine();
     }
 }

@@ -130,6 +130,39 @@ public class InvertedIndex {
          }
          return result;
     }
+
+    public void printTermInfo(String query) {
+        // Tokenisasi query
+        String[] tokens = Tokenizer.tokenize(query);
+    
+        boolean found = false;
+        for (String token : tokens) {
+            for (Term term : this.invertedList) {
+                if (term.getTerm().equals(token)) {
+                    found = true;
+
+                    DocListOrdered<Document> docs = term.getDocOrdered();
+            
+
+                    System.out.println("==========");
+                    System.out.println("Term: " + token);
+                    System.out.println("DF: " + term.getDf());
+                    System.out.printf("IDF: %.4f\n", term.getIdf());
+                    System.out.println("Dokumen yang mengandung term ini:");
+                    for (Document doc : docs) {
+                        System.out.println("- " + doc.getName()); 
+                    }
+                }
+            }
+        }
+
+        if (!found) {
+            System.out.println("==========");
+            System.out.println("Tidak ditemukan term yang cocok dengan query: " + query);
+            System.out.println("==========");
+        }
+    }
+
     
 
     
